@@ -1,0 +1,73 @@
+// In a file called credit.c in a ~/pset1/credit/ directory, write a program that prompts the user for a credit card number 
+and then reports (via printf) whether it is a valid American Express, MasterCard, or Visa card number, per the definitions of each’s format herein. 
+So that we can automate some tests of your code, we ask that your program’s last line of output be AMEX\n or MASTERCARD\n or VISA\n or INVALID\n, 
+nothing more, nothing less. For simplicity, you may assume that the user’s input will be entirely numeric (i.e., devoid of hyphens, as might 
+be printed on an actual card). But do not assume that the user’s input will fit in an int!
+
+#include <cs50.h>
+#include <stdio.h>
+
+
+int main(void)
+{
+    // Get the number
+    long cardnumber = get_long("Number: ");
+
+    // Do Luhn check
+    int luhn = 0;
+    for (long remain = (cardnumber / 10); remain > 0; remain = remain / 100)
+    {
+        int test = remain % 10 * 2;
+        if ((remain % 10 * 2) > 9)
+        {
+            luhn = luhn + ((remain % 10 * 2) % 10) + ((remain % 10 * 2) / 10);
+        }
+        else
+        {
+            luhn = luhn + remain % 10 * 2;
+        }
+    }
+    for (long rest = cardnumber; rest > 0; rest = rest / 100)
+    {
+        luhn = luhn + (rest % 10);
+    }
+    if (luhn % 10 != 0)
+    {
+        printf("%i\n INVALID\n", luhn);
+    }
+    else
+    {
+
+        // Determine if VISA (Visa uses 13- and 16-digit numbers, all Visa numbers start with 4)
+        if (cardnumber > (4 * (1e12)) && cardnumber < (5 * (1e12)))
+        {
+            printf("VISA\n");
+        }
+        else if (cardnumber > (4 * (1e15)) && cardnumber < (5 * (1e15)))
+        {
+            printf("VISA\n");
+        }
+
+        // Determine if American Express (American Express uses 15-digit numbers, all American Express numbers start with 34 or 37)
+        else if (cardnumber > (34 * (1e13)) && cardnumber < (35 * (1e13)))
+        {
+            printf("AMEX\n");
+        }
+        else if (cardnumber > (37 * (1e13)) && cardnumber < (38 * (1e13)))
+        {
+            printf("AMEX\n");
+        }
+
+        // Determine if MasterCard (MasterCard uses 16-digit numbers, MasterCard numbers start with 51, 52, 53, 54, or 55)
+        else if (cardnumber > (51 * (1e14)) && cardnumber < (56 * (1e14)))
+        {
+            printf("MASTERCARD\n");
+        }
+
+        // If none of the above were true
+        else
+        {
+            printf("INVALID\n");
+        }
+    }
+}
